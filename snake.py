@@ -26,7 +26,7 @@ for row_index in range(ROWS):
 
 snake_tiles = [(len(tiles)//2, len(tiles[0])//2)]
 snake_direction = 'left'
-snake_movements_per_second = 4
+snake_movements_per_second = 10
 apple_tiles = [(random.randint(0, ROWS-1), random.randint(0, COLUMNS-1)) for _ in range(APPLE_AMOUNT)]
 
 # Main game loop
@@ -59,22 +59,25 @@ while running:
   for cords in apple_tiles:
     pygame.draw.rect(screen, (0, 255, 0), tiles[cords[0]][cords[1]])
 
-  if frame % (FPS // snake_movements_per_second) == 0:
+  if frame % (FPS / snake_movements_per_second) == 0:
     head = snake_tiles[-1]
     if snake_direction == 'left':
-      snake_tiles.append((head[0], head[1]-1))
+      new_head = (head[0], head[1]-1)
     if snake_direction == 'right':
-      snake_tiles.append((head[0], head[1]+1))
+      new_head = (head[0], head[1]+1)
     if snake_direction == 'up':
-      snake_tiles.append((head[0]-1, head[1]))
+      new_head = (head[0]-1, head[1])
     if snake_direction == 'down':
-      snake_tiles.append((head[0]+1, head[1]))
-    if head in apple_tiles:
-      apple_tiles.remove(head)
-      apple_tiles.append((random.randint(0, ROWS-1), random.randint(0, COLUMNS-1)))
-      snake_movements_per_second += 1
+      new_head = (head[0]+1, head[1])
+    if new_head in snake_tiles or new_head[0] < 0 or new_head[0] >= ROWS or new_head[1] < 0 or new_head[1] >= COLUMNS:
+      running = False
     else:
-      snake_tiles.pop(0)
+      snake_tiles.append(new_head)
+      if new_head in apple_tiles:
+        apple_tiles.remove(new_head)
+        apple_tiles.append((random.randint(0, ROWS-1), random.randint(0, COLUMNS-1)))
+      else:
+        snake_tiles.pop(0)
 
   pygame.display.flip()
 
