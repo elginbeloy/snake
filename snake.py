@@ -1,4 +1,5 @@
 import pygame
+import random
 
 # Game constants
 TILE_SIZE = 20
@@ -7,6 +8,7 @@ COLUMNS = 60
 SCREEN_WIDTH = TILE_SIZE * COLUMNS
 SCREEN_HEIGHT = TILE_SIZE * ROWS
 FPS = 60
+APPLE_AMOUNT = 5
 
 # Initialize game window
 pygame.init()
@@ -24,7 +26,8 @@ for row_index in range(ROWS):
 
 snake_tiles = [(len(tiles)//2, len(tiles[0])//2)]
 snake_direction = 'left'
-snake_movements_per_second = 3
+snake_movements_per_second = 4
+apple_tiles = [(random.randint(0, ROWS-1), random.randint(0, COLUMNS-1)) for _ in range(APPLE_AMOUNT)]
 
 # Main game loop
 running = True
@@ -34,7 +37,6 @@ while running:
   frame += 1
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
-      print("QUIT")
       running = False
     if event.type == pygame.KEYDOWN:
       if event.key == pygame.K_LEFT:
@@ -46,7 +48,6 @@ while running:
       if event.key == pygame.K_DOWN:
         snake_direction = "down"
 
-
   screen.fill((0,0,0))
   for row in tiles:
     for tile in row:
@@ -55,7 +56,10 @@ while running:
   for cords in snake_tiles:
     pygame.draw.rect(screen, (255, 0, 0), tiles[cords[0]][cords[1]])
 
-  if frame % (FPS / snake_movements_per_second) == 0:
+  for cords in apple_tiles:
+    pygame.draw.rect(screen, (0, 255, 0), tiles[cords[0]][cords[1]])
+
+  if frame % (FPS // snake_movements_per_second) == 0:
     head = snake_tiles[-1]
     if snake_direction == 'left':
       snake_tiles.append((head[0], head[1]-1))
@@ -65,9 +69,13 @@ while running:
       snake_tiles.append((head[0]-1, head[1]))
     if snake_direction == 'down':
       snake_tiles.append((head[0]+1, head[1]))
-    #snake_tiles.pop(0)
+    if head in apple_tiles:
+      apple_tiles.remove(head)
+      apple_tiles.append((random.randint(0, ROWS-1), random.randint(0, COLUMNS-1)))
+      snake_movements_per_second += 1
+    else:
+      snake_tiles.pop(0)
 
   pygame.display.flip()
 
 pygame.quit()
-print("Game exited...")
