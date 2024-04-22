@@ -8,14 +8,23 @@ COLUMNS = 60
 SCREEN_WIDTH = TILE_SIZE * COLUMNS
 SCREEN_HEIGHT = TILE_SIZE * ROWS
 FPS = 60
-APPLE_AMOUNT = 5
+APPLE_AMOUNT = 10
 
-# Initialize game window
+SNAKE_HEAD_COLOR = (115, 15, 255)
+SNAKE_COLOR = (155, 35, 245)
+SNAKE_GLOW_COLOR = (155, 35, 245, 75)
+APPLE_COLOR = (255, 35, 0)
+APPLE_GLOW_COLOR = (255, 35, 0, 55)
+BACKGROUND_COLOR = (15, 15, 35)
+GRID_COLOR = (25, 25, 55)
+
+# Setup game window and clock
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Snake")
 clock = pygame.time.Clock()
 
+# Create all the tiles for the grid, snake, and apple
 tiles = []
 for row_index in range(ROWS):
   tile_row = []
@@ -25,44 +34,54 @@ for row_index in range(ROWS):
   tiles.append(tile_row)
 
 snake_tiles = [(len(tiles)//2, len(tiles[0])//2)]
-snake_direction = 'left'
-snake_movements_per_second = 10
-apple_tiles = [(random.randint(0, ROWS-1), random.randint(0, COLUMNS-1)) for _ in range(APPLE_AMOUNT)]
+apple_tiles = [
+  (random.randint(0, ROWS-1),
+  random.randint(0, COLUMNS-1)) for _ in range(APPLE_AMOUNT)]
 
-# Colors
-SNAKE_COLOR = (0, 255, 255)
-APPLE_COLOR = (255, 165, 0)
-BACKGROUND_COLOR = (25, 25, 25)
-GRID_COLOR = (50, 50, 50)
+# Initial snake speed and direction
+snake_direction = 'right'
+snake_movements_per_second = 10
+score = 0
 
 # Main game loop
 running = True
 frame = 0
 while running:
-  dt = clock.tick(FPS)
+  clock.tick(FPS)
   frame += 1
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
       running = False
     if event.type == pygame.KEYDOWN:
-      if event.key == pygame.K_LEFT:
+      if event.key == pygame.K_LEFT and snake_direction != "right":
         snake_direction = "left"
-      if event.key == pygame.K_RIGHT:
+      if event.key == pygame.K_RIGHT and snake_direction != "left":
         snake_direction = "right"
-      if event.key == pygame.K_UP:
+      if event.key == pygame.K_UP and snake_direction != "down":
         snake_direction = "up"
-      if event.key == pygame.K_DOWN:
+      if event.key == pygame.K_DOWN and snake_direction != "up":
         snake_direction = "down"
 
   screen.fill(BACKGROUND_COLOR)
-  for row in tiles:
-    for tile in row:
-      pygame.draw.rect(screen, GRID_COLOR, tile, 1)
+  for row_index, row in enumerate(tiles):
+    for column_index, tile in enumerate(row):
+      tile_cords = (row_index, column_index)
+      if tile_cords not in snake_tiles and tile_cords not in apple_tiles:
+        pygame.draw.rect(screen, GRID_COLOR, tile, 1)
 
-  for cords in snake_tiles:
-    pygame.draw.rect(screen, SNAKE_COLOR, tiles[cords[0]][cords[1]])
+  for cords_index, cords in enumerate(snake_tiles):
+    snake_glow_surface = pygame.Surface((TILE_SIZE + 10, TILE_SIZE + 10), pygame.SRCALPHA)
+    snake_glow_surface.fill(SNAKE_GLOW_COLOR)
+    screen.blit(snake_glow_surface, (tiles[cords[0]][cords[1]].x - 5, tiles[cords[0]][cords[1]].y - 5))
+    if cords_index == len(snake_tiles) - 1:
+      pygame.draw.rect(screen, SNAKE_HEAD_COLOR, tiles[cords[0]][cords[1]])
+    else:
+      pygame.draw.rect(screen, SNAKE_COLOR, tiles[cords[0]][cords[1]])
 
   for cords in apple_tiles:
+    apple_glow_surface = pygame.Surface((TILE_SIZE + 10, TILE_SIZE + 10), pygame.SRCALPHA)
+    apple_glow_surface.fill(APPLE_GLOW_COLOR)
+    screen.blit(apple_glow_surface, (tiles[cords[0]][cords[1]].x - 5, tiles[cords[0]][cords[1]].y - 5))
     pygame.draw.rect(screen, APPLE_COLOR, tiles[cords[0]][cords[1]])
 
   if frame % (FPS // snake_movements_per_second) == 0:
@@ -80,6 +99,7 @@ while running:
     else:
       snake_tiles.append(new_head)
       if new_head in apple_tiles:
+        score += 1
         if len(snake_tiles) % 10 == 0:
           snake_movements_per_second += 1
         apple_tiles.remove(new_head)
@@ -90,3 +110,4 @@ while running:
   pygame.display.flip()
 
 pygame.quit()
+print("You died! Score: " + str(score))
