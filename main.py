@@ -8,7 +8,7 @@ COLUMNS = 60
 SCREEN_WIDTH = TILE_SIZE * COLUMNS
 SCREEN_HEIGHT = TILE_SIZE * ROWS
 FPS = 60
-APPLE_AMOUNT = 10
+APPLE_AMOUNT = 20
 
 SNAKE_HEAD_COLOR = (115, 15, 255)
 SNAKE_COLOR = (155, 35, 245)
@@ -17,9 +17,12 @@ APPLE_COLOR = (255, 35, 0)
 APPLE_GLOW_COLOR = (255, 35, 0, 55)
 BACKGROUND_COLOR = (15, 15, 35)
 GRID_COLOR = (25, 25, 55)
+SCORE_COLOR = (255, 255, 255)
 
 # Setup game window and clock
 pygame.init()
+pygame.font.init()
+font = pygame.font.Font(pygame.font.get_default_font(), 40)
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Snake")
 clock = pygame.time.Clock()
@@ -68,6 +71,9 @@ while running:
       tile_cords = (row_index, column_index)
       if tile_cords not in snake_tiles and tile_cords not in apple_tiles:
         pygame.draw.rect(screen, GRID_COLOR, tile, 1)
+
+  score_text = font.render(f'Score: {score}', True, SCORE_COLOR)
+  screen.blit(score_text, (SCREEN_WIDTH - score_text.get_width() - 20, 20))
 
   for cords_index, cords in enumerate(snake_tiles):
     snake_glow_surface = pygame.Surface((TILE_SIZE + 10, TILE_SIZE + 10), pygame.SRCALPHA)
