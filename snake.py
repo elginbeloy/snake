@@ -26,8 +26,14 @@ for row_index in range(ROWS):
 
 snake_tiles = [(len(tiles)//2, len(tiles[0])//2)]
 snake_direction = 'left'
-snake_movements_per_second = 10
+snake_movements_per_second = 3
 apple_tiles = [(random.randint(0, ROWS-1), random.randint(0, COLUMNS-1)) for _ in range(APPLE_AMOUNT)]
+
+# Colors
+SNAKE_COLOR = (0, 255, 0)
+APPLE_COLOR = (255, 0, 0)
+BACKGROUND_COLOR = (0, 0, 0)
+GRID_COLOR = (55, 55, 55)
 
 # Main game loop
 running = True
@@ -48,16 +54,16 @@ while running:
       if event.key == pygame.K_DOWN:
         snake_direction = "down"
 
-  screen.fill((0,0,0))
+  screen.fill(BACKGROUND_COLOR)
   for row in tiles:
     for tile in row:
-      pygame.draw.rect(screen, (55, 55, 55), tile, 1)
+      pygame.draw.rect(screen, GRID_COLOR, tile, 1)
 
   for cords in snake_tiles:
-    pygame.draw.rect(screen, (255, 0, 0), tiles[cords[0]][cords[1]])
+    pygame.draw.rect(screen, SNAKE_COLOR, tiles[cords[0]][cords[1]])
 
   for cords in apple_tiles:
-    pygame.draw.rect(screen, (0, 255, 0), tiles[cords[0]][cords[1]])
+    pygame.draw.rect(screen, APPLE_COLOR, tiles[cords[0]][cords[1]])
 
   if frame % (FPS / snake_movements_per_second) == 0:
     head = snake_tiles[-1]
