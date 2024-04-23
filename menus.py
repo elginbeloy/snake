@@ -1,10 +1,10 @@
 import pygame
 
 main_menu_styles = {
-  "background_color": (255, 25, 55),
+  "background_color": (25, 25, 55),
   "title_font": pygame.font.Font(pygame.font.get_default_font(), 48),
-  "title_color": (55, 255, 55),
-  "subtitle_font": pygame.font.Font(pygame.font.get_default_font(), 24),
+  "title_color": (255, 55, 55),
+  "subtitle_font": pygame.font.Font(pygame.font.get_default_font(), 28),
   "subtitle_color": (225, 225, 225),
 }
 
@@ -29,7 +29,7 @@ death_menu_styles = {
   "background_color": (25, 25, 55),
   "title_font": pygame.font.Font(pygame.font.get_default_font(), 48),
   "title_color": (255, 55, 55),
-  "subtitle_font": pygame.font.Font(pygame.font.get_default_font(), 24),
+  "subtitle_font": pygame.font.Font(pygame.font.get_default_font(), 28),
   "subtitle_color": (225, 225, 225),
 }
 
@@ -40,5 +40,18 @@ def show_death_menu(screen, score):
   screen.blit(title_text, (screen.get_width() / 2 - title_text.get_width() / 2, 100))
   score_text = styles["subtitle_font"].render(f'Score: {score}', True, styles["subtitle_color"])
   screen.blit(score_text, (screen.get_width() / 2 - score_text.get_width() / 2, 200))
+
   pygame.display.flip()
-  pygame.time.wait(2000)
+  pygame.time.wait(1000)
+
+  subtitle_text = styles["subtitle_font"].render(f'Press any key to restart', True, styles["subtitle_color"])
+  screen.blit(subtitle_text, (screen.get_width() / 2 - subtitle_text.get_width() / 2, 260))
+  pygame.display.flip()
+  waiting = True
+  while waiting:
+    for event in pygame.event.get():
+      if event.type == pygame.QUIT:
+        pygame.quit()
+        exit()
+      if event.type == pygame.KEYDOWN:
+        waiting = False
