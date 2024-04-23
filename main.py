@@ -1,5 +1,9 @@
 import pygame
+pygame.init()
+pygame.font.init()
+
 import random
+from menus import show_main_menu, show_death_menu
 
 # Game constants
 TILE_SIZE = 20
@@ -20,8 +24,6 @@ GRID_COLOR = (25, 25, 55)
 SCORE_COLOR = (255, 255, 255)
 
 # Setup game window and clock
-pygame.init()
-pygame.font.init()
 font = pygame.font.Font(pygame.font.get_default_font(), 40)
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Snake")
