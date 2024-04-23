@@ -1,6 +1,6 @@
 import pygame
 
-main_menu_styles = {
+styles = {
   "background_color": (25, 25, 55),
   "title_font": pygame.font.Font(pygame.font.get_default_font(), 48),
   "title_color": (255, 55, 55),
@@ -8,16 +8,11 @@ main_menu_styles = {
   "subtitle_color": (225, 225, 225),
 }
 
-def show_main_menu(screen):
-  styles = main_menu_styles
-  screen.fill(styles["background_color"])
-  title_text = styles["title_font"].render('S N A K E', True, styles["title_color"])
-  screen.blit(title_text, (screen.get_width() / 2 - title_text.get_width() / 2, 100))
-  subtitle_text = styles["subtitle_font"].render("Press any key to start", True, styles["subtitle_color"])
-  screen.blit(subtitle_text, (screen.get_width() / 2 - subtitle_text.get_width() / 2, 200))
-  pygame.display.flip()
+def wait_for_keypress():
+  clock = pygame.time.Clock()
   waiting = True
   while waiting:
+    clock.tick(10) # 10 FPS on Menu is fine cuz no re-paints
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
         pygame.quit()
@@ -25,16 +20,16 @@ def show_main_menu(screen):
       if event.type == pygame.KEYDOWN:
         waiting = False
 
-death_menu_styles = {
-  "background_color": (25, 25, 55),
-  "title_font": pygame.font.Font(pygame.font.get_default_font(), 48),
-  "title_color": (255, 55, 55),
-  "subtitle_font": pygame.font.Font(pygame.font.get_default_font(), 28),
-  "subtitle_color": (225, 225, 225),
-}
+def show_main_menu(screen):
+  screen.fill(styles["background_color"])
+  title_text = styles["title_font"].render('S  N  A  K  E', True, styles["title_color"])
+  screen.blit(title_text, (screen.get_width() / 2 - title_text.get_width() / 2, 100))
+  subtitle_text = styles["subtitle_font"].render("Press any key to start", True, styles["subtitle_color"])
+  screen.blit(subtitle_text, (screen.get_width() / 2 - subtitle_text.get_width() / 2, 200))
+  pygame.display.flip()
+  wait_for_keypress()
 
 def show_death_menu(screen, score):
-  styles = death_menu_styles
   screen.fill(styles["background_color"])
   title_text = styles["title_font"].render('Game Over', True, styles["title_color"])
   screen.blit(title_text, (screen.get_width() / 2 - title_text.get_width() / 2, 100))
@@ -47,11 +42,4 @@ def show_death_menu(screen, score):
   subtitle_text = styles["subtitle_font"].render(f'Press any key to restart', True, styles["subtitle_color"])
   screen.blit(subtitle_text, (screen.get_width() / 2 - subtitle_text.get_width() / 2, 260))
   pygame.display.flip()
-  waiting = True
-  while waiting:
-    for event in pygame.event.get():
-      if event.type == pygame.QUIT:
-        pygame.quit()
-        exit()
-      if event.type == pygame.KEYDOWN:
-        waiting = False
+  wait_for_keypress()
