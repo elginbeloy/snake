@@ -32,7 +32,8 @@ clock = pygame.time.Clock()
 def reset_game():
   global snake_tiles, apple_tiles, snake_direction, snake_movements_per_second, score
   snake_tiles = [(len(tiles)//2, len(tiles[0])//2)]
-  apple_tiles = [(random.randint(0, ROWS-1), random.randint(0, COLUMNS-1)) for _ in range(APPLE_AMOUNT)]
+  possible_tiles = [(x, y) for x in range(ROWS-1) for y in range(COLUMNS-1) if (x,y) not in snake_tiles]
+  apple_tiles = random.sample(possible_tiles, APPLE_AMOUNT)
   snake_direction = 'right'
   snake_movements_per_second = 10
   score = 0
