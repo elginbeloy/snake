@@ -1,4 +1,5 @@
 import pygame
+from widgets import Slider
 
 styles = {
   "background_color": (25, 25, 55),
@@ -8,11 +9,11 @@ styles = {
   "subtitle_color": (225, 225, 225),
 }
 
-def wait_for_keypress():
+def wait_for_keypress(update_func, FPS=10):
   clock = pygame.time.Clock()
   waiting = True
   while waiting:
-    clock.tick(10) # 10 FPS on Menu is fine cuz no re-paints
+    clock.tick(FPS)
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
         pygame.quit()
@@ -20,26 +21,53 @@ def wait_for_keypress():
       if event.type == pygame.KEYDOWN:
         waiting = False
 
+      update_func()
+
 def show_main_menu(screen):
-  screen.fill(styles["background_color"])
+  slider = Slider((screen.get_width() / 2) - 100, 300, 200, 30, 10, max_value=100)
   title_text = styles["title_font"].render('S  N  A  K  E', True, styles["title_color"])
-  screen.blit(title_text, (screen.get_width() / 2 - title_text.get_width() / 2, 100))
   subtitle_text = styles["subtitle_font"].render("Press any key to start", True, styles["subtitle_color"])
-  screen.blit(subtitle_text, (screen.get_width() / 2 - subtitle_text.get_width() / 2, 200))
-  pygame.display.flip()
-  wait_for_keypress()
+
+  def update_func():
+    screen.fill(styles["background_color"])
+    screen.blit(title_text, (screen.get_width() / 2 - title_text.get_width() / 2, 100))
+    screen.blit(subtitle_text, (screen.get_width() / 2 - subtitle_text.get_width() / 2, 200))
+
+    apples = slider.value
+    apples_text = styles["subtitle_font"].render(f"Apple Amount: {apples}", True, styles["subtitle_color"])
+    screen.blit(apples_text, (screen.get_width() / 2 - apples_text.get_width() / 2, 250))
+    slider.display(screen)
+    slider.update()
+    pygame.display.flip()
+
+  wait_for_keypress(update_func, FPS=60)
+  return slider.value
 
 def show_death_menu(screen, score):
-  screen.fill(styles["background_color"])
+  slider = Slider((screen.get_width() / 2) - 100, 320, 200, 30, 10, max_value=100)
   title_text = styles["title_font"].render('Game Over', True, styles["title_color"])
-  screen.blit(title_text, (screen.get_width() / 2 - title_text.get_width() / 2, 100))
   score_text = styles["subtitle_font"].render(f'Score: {score}', True, styles["subtitle_color"])
-  screen.blit(score_text, (screen.get_width() / 2 - score_text.get_width() / 2, 200))
+  subtitle_text = styles["subtitle_font"].render(f'Press any key to restart', True, styles["subtitle_color"])
 
+  screen.fill(styles["background_color"])
+  screen.blit(title_text, (screen.get_width() / 2 - title_text.get_width() / 2, 100))
+  screen.blit(score_text, (screen.get_width() / 2 - score_text.get_width() / 2, 180))
   pygame.display.flip()
   pygame.time.wait(1000)
 
-  subtitle_text = styles["subtitle_font"].render(f'Press any key to restart', True, styles["subtitle_color"])
-  screen.blit(subtitle_text, (screen.get_width() / 2 - subtitle_text.get_width() / 2, 260))
-  pygame.display.flip()
-  wait_for_keypress()
+  def update_func():
+    screen.fill(styles["background_color"])
+    screen.blit(title_text, (screen.get_width() / 2 - title_text.get_width() / 2, 100))
+    screen.blit(score_text, (screen.get_width() / 2 - score_text.get_width() / 2, 180))
+    screen.blit(subtitle_text, (screen.get_width() / 2 - subtitle_text.get_width() / 2, 240))
+
+    apples = slider.value
+    apples_text = styles["subtitle_font"].render(f"Apple Amount: {apples}", True, styles["subtitle_color"])
+    screen.blit(apples_text, (screen.get_width() / 2 - apples_text.get_width() / 2, 280))
+    slider.display(screen)
+    slider.update()
+    pygame.display.flip()
+
+  update_func()
+  wait_for_keypress(update_func, FPS=60)
+  return slider.value

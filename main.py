@@ -46,10 +46,10 @@ for row_index in range(ROWS):
     tile_row.append(pygame.Rect(*[arg*TILE_SIZE for arg in rect_args]))
   tiles.append(tile_row)
 
+APPLE_AMOUNT = show_main_menu(screen)
 reset_game()
 
 # Main game loop
-show_main_menu(screen)
 running = True
 frame = 0
 while running:
@@ -104,7 +104,7 @@ while running:
     if snake_direction == 'down':
       new_head = (head[0]+1, head[1])
     if new_head in snake_tiles or new_head[0] < 0 or new_head[0] >= ROWS or new_head[1] < 0 or new_head[1] >= COLUMNS:
-      show_death_menu(screen, score)
+      APPLE_AMOUNT = show_death_menu(screen, score)
       reset_game()
     else:
       snake_tiles.append(new_head)
