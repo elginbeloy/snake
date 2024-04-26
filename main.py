@@ -56,6 +56,8 @@ frame = 0
 while running:
   clock.tick(FPS)
   frame += 1
+  if frame > FPS:
+    frame = 1
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
       running = False
